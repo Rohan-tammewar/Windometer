@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const winddata_1 = require("../controllers/winddata");
+const router = (0, express_1.Router)();
+router.post("/save", winddata_1.saveWindData);
+router.get("/getAllWindData", winddata_1.getAllWindData);
+router.get("/getAverageWindSpeed", winddata_1.getAverageWindSpeed);
+router.get("/getMaxWindSpeed", winddata_1.getMaxWindSpeed);
+exports.default = router;

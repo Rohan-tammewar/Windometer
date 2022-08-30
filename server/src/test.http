@@ -1,0 +1,52 @@
+// WIND APIs
+//Determine district and add it to database
+POST http://localhost:5000/winddata/save
+Content-Type: application/json
+
+{
+   "district":"Newyork",
+   "speed":"58",
+   "sourceDirection":"North-East",
+   "destinationDirection": "South-West",
+   "date": "2020-08-12 00:00:00",
+   "latitude":"67",
+   "longitude":"90"
+}
+
+###
+
+GET http://localhost:5000/winddata/getAllWindData
+
+###
+
+//timeStart and timeEnd are not handled right now
+GET http://localhost:5000/winddata/getAverageWindSpeed?district=Newyork&sourceDirection=North-East&destinationDirection=South-West
+
+###
+
+//Get max wind and number of ocurrence
+GET http://localhost:5000/winddata/getMaxWindSpeed
+
+###
+
+//DISTRICT APIs
+
+GET http://localhost:5000/districtdata/getAllDistrictData
+
+
+
+###
+
+GET http://localhost:5000/districtdata/getAllDistrictList
+
+###
+
+POST http://localhost:5000/districtdata/save
+Content-Type: application/json
+
+{
+   "name":"Newyork",
+   "coordinates":"12,34,54,32"
+}
+###
+
