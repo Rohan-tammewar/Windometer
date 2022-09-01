@@ -5,13 +5,14 @@ Content-Type: application/json
 
 {
    "district":"Newyork",
-   "speed":"58",
-   "sourceDirection":"North-East",
-   "destinationDirection": "South-West",
-   "date": "2020-08-12 00:00:00",
+   "speed":"64",
+   "sourceDirection":"North",
+   "destinationDirection": "South",
+   "date": "2022-10-20 14:30:00",
    "latitude":"67",
    "longitude":"90"
 }
+
 
 ###
 
@@ -20,12 +21,39 @@ GET http://localhost:5000/winddata/getAllWindData
 ###
 
 //timeStart and timeEnd are not handled right now
-GET http://localhost:5000/winddata/getAverageWindSpeed?district=Newyork&sourceDirection=North-East&destinationDirection=South-West
+POST http://localhost:5000/winddata/AverageWindSpeed
+Content-Type: application/json
+
+{
+   "district":"Thane",
+   "sourceDirection":"south",
+   "destinationDirection": "north",
+   "timeStart": "2020-10-20 00:30:00",
+   "timeEnd": "2020-10-20 19:30:00"
+}
+###
+//Get probabaitly
+POST http://localhost:5000/winddata/getProbability
+Content-Type: application/json
+
+{
+   "sourceDirection": "north",
+   "destinationDirection": "northwest"
+}
 
 ###
 
 //Get max wind and number of ocurrence
 GET http://localhost:5000/winddata/getMaxWindSpeed
+
+###
+
+GET  http://localhost:5000/winddata/getWindDirectionOccurance
+
+###
+
+//Test Queries
+GET http://localhost:5000/winddata/testQuery
 
 ###
 
@@ -45,7 +73,7 @@ POST http://localhost:5000/districtdata/save
 Content-Type: application/json
 
 {
-   "name":"Newyork",
+   "name":"Raigad",
    "coordinates":"12,34,54,32"
 }
 ###

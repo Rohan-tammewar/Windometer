@@ -1,10 +1,13 @@
 import { Router } from "express";
 
+
 import {
   getAllWindData,
-  getAverageWindSpeed,
+  AverageWindSpeed,
   saveWindData,
-  getMaxWindSpeed
+  getMaxWindSpeed,
+  getWindDirectionOccurance,
+  getProbability
 } from "../controllers/winddata";
 
 const router = Router();
@@ -12,8 +15,15 @@ router.post("/save", saveWindData);
 
 router.get("/getAllWindData", getAllWindData);
 
-router.get("/getAverageWindSpeed", getAverageWindSpeed);
+router.post("/AverageWindSpeed", AverageWindSpeed);
+
+router.post("/getProbability", getProbability);
 
 router.get("/getMaxWindSpeed", getMaxWindSpeed);
+
+router.get("/getWindDirectionOccurance", getWindDirectionOccurance)
+
+
+
 
 export default router;

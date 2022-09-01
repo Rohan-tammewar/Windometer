@@ -8,6 +8,7 @@ const winddata_1 = __importDefault(require("./routes/winddata"));
 const districtdata_1 = __importDefault(require("./routes/districtdata"));
 const config_1 = __importDefault(require("./db/config"));
 const body_parser_1 = require("body-parser");
+require("dotenv").config();
 const cors = require('cors');
 const app = (0, express_1.default)();
 app.use((0, body_parser_1.json)());
@@ -26,6 +27,6 @@ config_1.default
     .catch((err) => {
     console.log("Error", err);
 });
-app.listen(5000, () => {
-    console.log("Server started on port 5000");
+app.listen(process.env.PORT, () => {
+    console.log("Server started on port ", process.env.PORT);
 });

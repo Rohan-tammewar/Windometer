@@ -1,26 +1,34 @@
-import React, { useState } from 'react'
-import Heading from '../Utilities/Heading';
-import Wrapper from '../wrapper';
-import SearchOutput from '../Utilities/SearchOutput/SearchOutput.styled';
-import MaxEntriesSpeedContainer from './MaxEntriesSpeedOcc.styled';
+import React, { useEffect, useState } from 'react'
+import Heading from '../Utilities/Heading'
+import Wrapper from '../wrapper'
+import SearchOutput from '../Utilities/SearchOutput/SearchOutput.styled'
+import MaxEntriesSpeedContainer from './MaxEntriesSpeedOcc.styled'
+import { getMaximumWindDirection } from '../../data'
 
 const MaxEntriesOccOfSpeeding = () => {
+  const [maxWindDirectionOccurence, setMaxWindDirectionOccurence] = useState(
+    'No Data',
+  )
+  useEffect(() => {
+    getMaximumWindDirection().then((res) => {
+      setMaxWindDirectionOccurence(res.data.result)
+    })
+  }, [])
 
-    const [dateTime, setDateTime] = useState('');
-
-
-    return (
-        <MaxEntriesSpeedContainer className='max-entries-occ-speeding-details'>
-            <Wrapper>
-                <div className="max-entries-occurences">
-                    <Heading className='heading' heading='Maximum Entries Occurences of Speeding on basis of Wind' />
-                    <div className="search-details">
-                        <SearchOutput className="search-output"><p>South-North : 15</p></SearchOutput>
-                    </div>
-                </div>
-            </Wrapper >
-        </MaxEntriesSpeedContainer>
-    )
+  return (
+    <MaxEntriesSpeedContainer className="max-entries-occ-speeding-details">
+      <Wrapper>
+        <div className="max-entries-occurences">
+          <Heading className="heading" heading="Frequent windflow direction" />
+          <div className="search-details">
+            <SearchOutput className="search-output">
+              <p>{maxWindDirectionOccurence}</p>
+            </SearchOutput>
+          </div>
+        </div>
+      </Wrapper>
+    </MaxEntriesSpeedContainer>
+  )
 }
 
-export default MaxEntriesOccOfSpeeding;
+export default MaxEntriesOccOfSpeeding

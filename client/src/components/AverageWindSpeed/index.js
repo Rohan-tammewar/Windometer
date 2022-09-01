@@ -3,6 +3,7 @@ import {
   directionsOptions,
   getDistrictList,
   createDistrictOptions,
+  getAverageWindSpeed,
 } from '../../data'
 import Button from '../Utilities/Button'
 import Dropdown from '../Utilities/Dropdown'
@@ -13,25 +14,36 @@ import SearchOutput from '../Utilities/SearchOutput/SearchOutput.styled'
 import AvgWindSpeedContainer from './AvgWindSpeed.styled'
 
 const AverageWindSpeed = () => {
+  const [avgWindSpeed, setAvgWindSpeed] = useState('0')
+  const [districtOptions, setDistrictOptions] = useState('')
+  const [districtList, setDistrictList] = useState('')
   const onAvgWindSpeedDetailsSubmit = (e) => {
     e.preventDefault()
-    console.log('e')
-    const details = new FormData().entries()
+
+    const details = new FormData(e.target)
+
+    const responseData = {
+      district: details.get('district'),
+      sourceDirection: details.get('sourceDirection'),
+      destinationDirection: details.get('destinationDirection'),
+      timeStart: details.get('datetimeFrom'),
+      timeEnd: details.get('datetimeTo'),
+    }
+
+    const response = getAverageWindSpeed(responseData)
+
+    response.then((res) => {
+      setAvgWindSpeed(res.responseMessage.data[0].AverageSpeed)
+    })
   }
 
   useEffect(() => {
     getDistrictList().then((result) => {
-      //   console.log(result.data)
       setDistrictOptions(createDistrictOptions(result.data))
-      setDistrictList(result.data)
     })
   }, [])
 
-  const [districtList, setDistrictList] = useState('')
-
   //   console.log(districtList)
-
-  const [districtOptions, setDistrictOptions] = useState('')
 
   return (
     <AvgWindSpeedContainer className="avg-wind-speed-details">
@@ -46,18 +58,18 @@ const AverageWindSpeed = () => {
               <FormGroup className="form-group">
                 <Label htmlFor="datetime">Date & Time From...</Label>
                 <Input
-                  type="text"
+                  type="datetime-local"
                   placeholder="in dd-mm-yyyy hh:mm:ss"
-                  name="datetime"
+                  name="datetimeFrom"
                   title="datetime"
                 />
               </FormGroup>
               <FormGroup className="form-group">
                 <Label htmlFor="datetime">Date & Time To...</Label>
                 <Input
-                  type="text"
+                  type="datetime-local"
                   placeholder="in dd-mm-yyyy hh:mm:ss"
-                  name="datetime"
+                  name="datetimeTo"
                   title="datetime"
                 />
               </FormGroup>
@@ -67,24 +79,30 @@ const AverageWindSpeed = () => {
                 <Dropdown
                   options={directionsOptions}
                   placeholder="direction from..."
+                  name="sourceDirection"
                 />
               </FormGroup>
               <FormGroup className="form-group">
                 <Dropdown
                   options={directionsOptions}
                   placeholder="direction to..."
+                  name="destinationDirection"
                 />
               </FormGroup>
             </div>
             <FormGroup className="form-group">
-              <Dropdown options={districtOptions} placeholder="district..." />
+              <Dropdown
+                options={districtOptions}
+                name="district"
+                placeholder="district..."
+              />
             </FormGroup>
             <FormGroup className="form-control">
               <Button buttonType="submit" value="search" />
             </FormGroup>
           </form>
           <SearchOutput className="search-output">
-            <p>53 Km/hr</p>
+            <p>{avgWindSpeed} Km/hr</p>
           </SearchOutput>
         </div>
       </Wrapper>

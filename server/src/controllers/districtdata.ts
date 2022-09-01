@@ -8,6 +8,7 @@ export const getAllDistrictData: RequestHandler = async (req, res, next) => {
     data: districtData,
   });
 };
+
 export const getAllDistrictList: RequestHandler = async (req, res, next) => {
   const districtData: DistrictData[] = await DistrictData.findAll({
     attributes: ["name"],
@@ -19,8 +20,16 @@ export const getAllDistrictList: RequestHandler = async (req, res, next) => {
 };
 
 export const addDistrictData: RequestHandler = async (req, res, next) => {
-  var districtdata = await DistrictData.create({ ...req.body });
-  return res
-    .status(200)
-    .json({ message: "District data added successfully", data: districtdata });
+  try {
+    var districtdata = await DistrictData.create({ ...req.body });
+    return res
+      .status(200)
+      .json({ message: "District data added successfully", data: districtdata });
+  } catch (error) {
+    //TODO: error handling
+    return res.json({
+      message: "Unable to add data"
+    })
+
+  }
 };

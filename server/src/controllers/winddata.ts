@@ -1,7 +1,11 @@
 import { RequestHandler } from "express";
 import { Sequelize } from "sequelize-typescript";
 import { Op } from "sequelize";
+import moment from "moment";
 import { WindData } from "../models/winddata";
+import { MaxNumberOfWindDirection } from "../utilities/maxspeedocc";
+import { Json } from "sequelize/types/utils";
+import { moveMessagePortToContext } from "worker_threads";
 
 export const getAllWindData: RequestHandler = async (req, res, next) => {
   const winddata: WindData[] = await WindData.findAll();
@@ -13,19 +17,25 @@ export const getAllWindData: RequestHandler = async (req, res, next) => {
 
 
 export const saveWindData: RequestHandler = async (req, res, next) => {
-  var winddata = await WindData.create({ ...req.body });
-  return res
-    .status(200)
-    .json({ message: "wind data updated successfully", data: winddata });
+  try {
+    var winddata = await WindData.create({ ...req.body });
+
+    return res
+      .status(200)
+      .json({ message: "wind data updated successfully", data: winddata });
+  } catch (error) {
+    console.error(error)
+  }
+
 };
 
-export const getAverageWindSpeed: RequestHandler = async (req, res, next) => {
-  const district = req.query?.district;
-  const sourceDirection = req.query?.sourceDirection;
-  const destinationDirection = req.query?.destinationDirection;
+export const AverageWindSpeed: RequestHandler = async (req, res, next) => {
+  const district = req.body?.district;
+  const sourceDirection = req.body?.sourceDirection;
+  const destinationDirection = req.body?.destinationDirection;
   //TODO: Between below time range
-  const timeStart = req.query?.timeStart;
-  const timeEnd = req.query?.timeEnd;
+  const timeStart = req.body?.timeStart;
+  const timeEnd = req.body?.timeEnd;
 
   const winddata = await WindData.findAll({
     attributes: [[Sequelize.fn("avg", Sequelize.col("speed")), "AverageSpeed"]],
@@ -33,9 +43,9 @@ export const getAverageWindSpeed: RequestHandler = async (req, res, next) => {
       district,
       sourceDirection,
       destinationDirection,
-      // date: {
-      //   [Op.between]: [timeStart, timeEnd],
-      // },
+      date: {
+        [Op.between]: [timeStart, timeEnd],
+      },
     },
   });
   return res
@@ -52,6 +62,11 @@ export const getMaxWindSpeed: RequestHandler = async (req, res, next) => {
   });
 
   const allData = await WindData.findAll();
+
+  //Calling function from utility
+
+
+
   let maxSpeed2 = -1;
   allData.forEach((element) => {
     maxSpeed2 = Math.max(Number(maxSpeed2), Number(element.speed));
@@ -74,5 +89,70 @@ export const getMaxWindSpeed: RequestHandler = async (req, res, next) => {
     },
   });
 };
+
+export const getWindDirectionOccurance: RequestHandler = async (req, res, next) => {
+  const winddata = await WindData.findAll();
+  let result = MaxNumberOfWindDirection(winddata).join(" and ")
+  return (res).status(200).json({
+    message: "Data fetched successfully",
+    data: {
+      result
+    }
+  })
+
+}
+export const getProbability: RequestHandler = async (req, res, next) => {
+  const sourceDirection = req.body?.sourceDirection;
+  const destinationDirection = req.body?.destinationDirection;
+
+
+  const format = "YYYY-MM-DD HH:mm:ss"
+  const timeStart = moment(new Date()).startOf('month').format(format);
+  const timeEnd = moment(new Date()).endOf('month').format(format);
+
+
+
+  const winddata = await WindData.findAll({
+    where: {
+      sourceDirection,
+      destinationDirection,
+      date: {
+        [Op.between]: [timeStart, timeEnd],
+      }
+    },
+  })
+
+  const allWinddata: WindData[] = await WindData.findAll({
+    where: {
+      date: {
+        [Op.between]: [timeStart, timeEnd],
+      }
+    }
+  });
+  let countForGivenDirecton = winddata.length
+  let countForAllDirection = allWinddata.length
+
+  if (countForGivenDirecton === 0) {
+    const message = "Insufficient Data"
+    return res.status(200).json({
+      data: {
+        message
+      }
+    })
+  }
+
+  let message = String((countForGivenDirecton / countForAllDirection) * 100) + "%"
+
+  return res.status(200).json({
+    data: {
+      message
+    }
+
+  })
+}
+
+
+
+
 
 

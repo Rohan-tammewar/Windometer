@@ -30,9 +30,17 @@ const getAllDistrictList = (req, res, next) => __awaiter(void 0, void 0, void 0,
 });
 exports.getAllDistrictList = getAllDistrictList;
 const addDistrictData = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var districtdata = yield districtdata_1.DistrictData.create(Object.assign({}, req.body));
-    return res
-        .status(200)
-        .json({ message: "District data added successfully", data: districtdata });
+    try {
+        var districtdata = yield districtdata_1.DistrictData.create(Object.assign({}, req.body));
+        return res
+            .status(200)
+            .json({ message: "District data added successfully", data: districtdata });
+    }
+    catch (error) {
+        //TODO: error handling
+        return res.json({
+            message: "Unable to add data"
+        });
+    }
 });
 exports.addDistrictData = addDistrictData;

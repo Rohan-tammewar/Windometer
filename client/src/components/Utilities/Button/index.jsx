@@ -1,14 +1,10 @@
-import React from 'react';
+import React from 'react'
 
-import StyledButton from './Button.styled';
+import StyledButton from './Button.styled'
 
-const Button = ({ styleClass, onClick, children, buttonType, value }) => {
-    const handleClick = (event) => onClick(event);
+const Button = ({ styleClass, children, buttonType, value }) => {
+  const myClass = `button ${styleClass}`
+  return <StyledButton type={buttonType} className={myClass} value={value} />
+}
 
-    const myClass = `button ${styleClass}`;
-    return (
-        <StyledButton type={buttonType} className={myClass} onClick={handleClick} value={value} />
-    );
-};
-
-export default Button;
+export default Button

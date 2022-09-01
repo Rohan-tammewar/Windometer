@@ -3,6 +3,7 @@ import windDataRoutes from "./routes/winddata";
 import districtDataRoutes from "./routes/districtdata";
 import connection from "./db/config";
 import { json, urlencoded } from "body-parser";
+require("dotenv").config()
 
 const cors = require('cors')
 const app = express();
@@ -33,6 +34,6 @@ connection
   .catch((err) => {
     console.log("Error", err);
   });
-app.listen(5000, () => {
-  console.log("Server started on port 5000");
+app.listen(process.env.PORT, () => {
+  console.log("Server started on port ", process.env.PORT);
 });

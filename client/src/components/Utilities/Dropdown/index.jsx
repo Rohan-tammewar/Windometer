@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import ReactSelect from 'react-select'
 import { StyledSelect } from './Dropdown.styled'
 
-const Dropdown = ({ options, placeholder }) => {
+const Dropdown = ({ name, options, placeholder }) => {
   const [selectValue, setSelectValue] = useState('')
 
   const filterChangeHandler = (e) => {
@@ -15,6 +15,7 @@ const Dropdown = ({ options, placeholder }) => {
       <ReactSelect
         onChange={filterChangeHandler}
         options={options}
+        name={name}
         isSearchable={false}
         className={`value-select`}
         classNamePrefix="value-select"

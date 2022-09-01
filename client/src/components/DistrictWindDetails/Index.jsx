@@ -1,20 +1,50 @@
-import React, { useState } from 'react'
-import { directionsOptions } from '../../data'
+import React, { useEffect, useState } from 'react'
+import {
+  createDistrictOptions,
+  directionsOptions,
+  getDistrictList,
+  saveDistrictWindData,
+} from '../../data'
 import Button from '../Utilities/Button'
 import Dropdown from '../Utilities/Dropdown'
 import Heading from '../Utilities/Heading'
 import Wrapper from '../wrapper'
 import { FormGroup, Input, Label } from '../Utilities/Form/Form.styled'
 import WindDetailsContainer from './DistrictWindDetails.styled'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const DistrictWindDetails = () => {
+  const [resMessage, setResMessage] = useState('')
+  const notify = (message) => toast(message)
+
   const onDistrictWindDetailsSubmit = (e) => {
     e.preventDefault()
-    console.log('e')
-    const details = new FormData().entries()
+    const details = new FormData(e.target)
+
+    const responseData = {
+      district: details.get('district'),
+      speed: details.get('speed'),
+      sourceDirection: details.get('sourceDirection'),
+      destinationDirection: details.get('destinationDirection'),
+      date: details.get('datetime'),
+      latitude: details.get('latitude'),
+      longitude: details.get('longitude'),
+    }
+    const message = saveDistrictWindData(responseData)
+    message.then((res) => {
+      setResMessage(res.responseMessage)
+      notify(res.responseMessage)
+    })
   }
 
-  const [dateTime, setDateTime] = useState('')
+  const [districtOptions, setDistrictOptions] = useState('')
+
+  useEffect(() => {
+    getDistrictList().then((result) => {
+      setDistrictOptions(createDistrictOptions(result.data))
+    })
+  }, [])
 
   return (
     <WindDetailsContainer className="wind-details">
@@ -32,28 +62,33 @@ const DistrictWindDetails = () => {
             />
           </FormGroup>
           <FormGroup className="form-group">
-            <Label htmlFor="datetime">District name</Label>
-            <Input type="text" name="district" title="district" />
+            <Dropdown
+              options={districtOptions}
+              placeholder="district"
+              name="district"
+            />
           </FormGroup>
           <div className="form-inline-group">
             <FormGroup className="form-group">
               <Dropdown
                 options={directionsOptions}
                 placeholder="directions from..."
+                name="sourceDirection"
               />
             </FormGroup>
             <FormGroup className="form-group">
               <Dropdown
                 options={directionsOptions}
                 placeholder="directions to..."
+                name="destinationDirection"
               />
             </FormGroup>
           </div>
           <FormGroup className="form-group">
             <Label htmlFor="datetime">Date & Time</Label>
             <Input
-              type="text"
-              placeholder="in dd-mm-yyyy hh:mm:ss"
+              type="datetime-local"
+              placeholder="in yyyy-mm-dd hh:mm:ss"
               name="datetime"
               title="datetime"
             />
@@ -68,6 +103,7 @@ const DistrictWindDetails = () => {
           </FormGroup>
           <FormGroup className="form-control">
             <Button buttonType="submit" value="add" />
+            <ToastContainer />
           </FormGroup>
         </form>
       </Wrapper>
